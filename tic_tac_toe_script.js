@@ -61,7 +61,7 @@ function utility(board) {
     return 0;
 }
 
-function minimax(board) {
+function minimax(board, alpha = -Infinity, beta = Infinity) {
     if (terminal(board)) {
         return { score: utility(board) };
     }
@@ -73,7 +73,7 @@ function minimax(board) {
 
     for (let action of actions(board)) {
         let newBoard = result(board, action);
-        let minimaxResult = minimax(newBoard);
+        let minimaxResult = minimax(newBoard, alpha, beta);
         let score = minimaxResult.score;
 
         if (isMaximizing) {
@@ -81,11 +81,17 @@ function minimax(board) {
                 bestScore = score;
                 bestAction = action;
             }
+            alpha = Math.max(alpha, bestScore);
         } else {
             if (score < bestScore) {
                 bestScore = score;
                 bestAction = action;
             }
+            beta = Math.min(beta, bestScore);
+        }
+
+        if (beta <= alpha) {
+            break;
         }
     }
     return { score: bestScore, action: bestAction };
