@@ -70,11 +70,16 @@ td[data-player="O"] {
     margin: 5px;
 }
 
+.btn:active:hover {
+    transform: scale(0.98);
+}
+
 .btn-active {
     background-color: #4CAF50;
     color: white;
 }
 
-.btn-active:hover {
+.btn-active:hover,
+.btn-active:active:hover {
     background-color: #449e48;
 }
