@@ -18,6 +18,9 @@ def initial_state():
 
 
 def player(board):
+    """
+    Returns player who has the next turn on a board.
+    """
     x_count = sum(row.count(X) for row in board)
     o_count = sum(row.count(O) for row in board)
 
@@ -28,10 +31,16 @@ def player(board):
 
 
 def actions(board):
+    """
+    Returns set of all possible actions (i, j) available on the board.
+    """
     return {(i, j) for i in range(3) for j in range(3) if board[i][j] == EMPTY}
 
 
 def result(board, action):
+    """
+    Returns the board that results from making move (i, j) on the board.
+    """
     if action not in actions(board):
         raise Exception("Invalid action")
 
@@ -41,6 +50,9 @@ def result(board, action):
 
 
 def winner(board):
+    """
+    Returns the winner of the game, if there is one.
+    """
     # Check rows, columns and diagonals
     for i in range(3):
         # Check rows and columns
@@ -59,6 +71,9 @@ def winner(board):
 
 
 def terminal(board):
+    """
+    Returns True if game is over, False otherwise.
+    """
     if winner(board) is not None:
         return True
     for row in board:
@@ -68,6 +83,9 @@ def terminal(board):
 
 
 def utility(board):
+    """
+    Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
+    """
     if winner(board) == X:
         return 1
     if winner(board) == O:
@@ -76,6 +94,9 @@ def utility(board):
 
 
 def minimax(board):
+    """
+    Returns the optimal action for the current player on the board.
+    """
     if terminal(board):
         return None
 
