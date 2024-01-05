@@ -1,15 +1,28 @@
+:root {
+    --light-gray: #e0e0e0;
+    --medium-gray: #b0b0b0;
+    --dark-gray: #333;
+    --red: #E57373;
+    --blue: #64B5F6;
+    --green: #4CAF50;
+    --dark-green: #449e48;
+    --modal-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    --td-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    --td-hover-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
 html {
     height: 100%;
 }
 
 body {
-    background: linear-gradient(to bottom, #f6f6f6, #e0e0e0);
+    background: linear-gradient(to bottom, #f6f6f6, var(--light-gray));
     font-family: 'Arial', sans-serif;
     margin: 0;
 }
 
 h2 {
-    color: #333;
+    color: var(--dark-gray);
     font-weight: bold;
     border-bottom: 2px solid #ddd;
     padding-bottom: 10px;
@@ -20,11 +33,11 @@ table {
     border-collapse: separate;
     border-spacing: 5px;
     margin: 0 auto;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--td-shadow);
 }
 
 td {
-    border: 1px solid #000;
+    border: 1px solid var(--dark-gray);
     width: 60px;
     height: 60px;
     cursor: pointer;
@@ -35,12 +48,11 @@ td {
     position: relative;
     transition: background-color 0.3s, box-shadow 0.3s;
     user-select: none;
-    border: 1px solid #333;
 }
 
 td:hover {
-    background-color: #e0e0e0;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    background-color: var(--light-gray);
+    box-shadow: var(--td-hover-shadow);
 }
 
 td:empty:hover::before {
@@ -49,19 +61,19 @@ td:empty:hover::before {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #b0b0b0;
+    color: var(--medium-gray);
 }
 
 td[data-player="X"] {
-    color: #E57373;
+    color: var(--red);
 }
 
 td[data-player="O"] {
-    color: #64B5F6;
+    color: var(--blue);
 }
 
 .modal-content {
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--modal-shadow);
 }
 
 .btn {
@@ -70,16 +82,17 @@ td[data-player="O"] {
     margin: 5px;
 }
 
-.btn:active:hover {
+.btn:active:hover,
+.btn-active:active:hover {
     transform: scale(0.98);
 }
 
 .btn-active {
-    background-color: #4CAF50;
+    background-color: var(--green);
     color: white;
 }
 
 .btn-active:hover,
 .btn-active:active:hover {
-    background-color: #449e48;
+    background-color: var(--dark-green);
 }
