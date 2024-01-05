@@ -13,16 +13,17 @@ def initial_state():
     """
     Returns starting state of the board.
     """
-    return [[EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY]]
+    return [[EMPTY, EMPTY, EMPTY], [EMPTY, EMPTY, EMPTY], [EMPTY, EMPTY, EMPTY]]
 
 
 def player(board):
-    """
-    Returns player who has the next turn on a board.
-    """
-    raise NotImplementedError
+    x_count = sum(row.count(X) for row in board)
+    o_count = sum(row.count(O) for row in board)
+
+    if x_count > o_count:
+        return O
+    else:
+        return X
 
 
 def actions(board):
