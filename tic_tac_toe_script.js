@@ -61,38 +61,34 @@ function utility(board) {
     return 0;
 }
 
-function minimax(board, alpha = -Infinity, beta = Infinity, isMaximizingPlayer = true) {
+function minimax(board) {
     if (terminal(board)) {
         return { score: utility(board) };
     }
 
+    let turn = player(board);
+    let isMaximizing = turn === X;
+    let bestScore = isMaximizing ? -Infinity : Infinity;
     let bestAction = null;
 
-    if (isMaximizingPlayer) {
-        let maxEval = -Infinity;
-        for (let action of actions(board)) {
-            let eval = minimax(result(board, action), alpha, beta, false).score;
-            if (eval > maxEval) {
-                maxEval = eval;
+    for (let action of actions(board)) {
+        let newBoard = result(board, action);
+        let minimaxResult = minimax(newBoard);
+        let score = minimaxResult.score;
+
+        if (isMaximizing) {
+            if (score > bestScore) {
+                bestScore = score;
                 bestAction = action;
             }
-            alpha = Math.max(alpha, eval);
-            if (beta <= alpha) break;
-        }
-        return { score: maxEval, action: bestAction };
-    } else {
-        let minEval = Infinity;
-        for (let action of actions(board)) {
-            let eval = minimax(result(board, action), alpha, beta, true).score;
-            if (eval < minEval) {
-                minEval = eval;
+        } else {
+            if (score < bestScore) {
+                bestScore = score;
                 bestAction = action;
             }
-            beta = Math.min(beta, eval);
-            if (beta <= alpha) break;
         }
-        return { score: minEval, action: bestAction };
     }
+    return { score: bestScore, action: bestAction };
 }
 
 // Tic-Tac-Toe Game Class
