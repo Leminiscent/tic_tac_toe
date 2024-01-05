@@ -167,7 +167,7 @@ class tic_tac_toe {
                 this.check_game_state();
                 this.turn = "X"; // Switch turn back to player
             }
-        }, 250);
+        }, 25);
     }
 
     convert_to_board_state() {
