@@ -41,10 +41,21 @@ def result(board, action):
 
 
 def winner(board):
-    """
-    Returns the winner of the game, if there is one.
-    """
-    raise NotImplementedError
+    # Check rows, columns and diagonals
+    for i in range(3):
+        # Check rows and columns
+        if board[i][0] == board[i][1] == board[i][2] != EMPTY:
+            return board[i][0]
+        if board[0][i] == board[1][i] == board[2][i] != EMPTY:
+            return board[0][i]
+
+    # Check diagonals
+    if board[0][0] == board[1][1] == board[2][2] != EMPTY:
+        return board[0][0]
+    if board[0][2] == board[1][1] == board[2][0] != EMPTY:
+        return board[0][2]
+
+    return None
 
 
 def terminal(board):
