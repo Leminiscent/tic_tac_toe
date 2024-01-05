@@ -63,3 +63,14 @@ td[data-player="O"] {
 .modal-content {
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
+
+.btn {
+    font-weight: bold;
+    padding: 10px 20px;
+    margin: 5px;
+}
+
+.btn-active {
+    background-color: #4CAF50;
+    color: white;
+}

@@ -1,119 +1,210 @@
-// Define the Tic-Tac-Toe game class
+// AI Functions
+const X = "X";
+const O = "O";
+const EMPTY = null;
+
+function initial_state() {
+    return [[EMPTY, EMPTY, EMPTY], [EMPTY, EMPTY, EMPTY], [EMPTY, EMPTY, EMPTY]];
+}
+
+function player(board) {
+    let xCount = board.flat().filter(cell => cell === X).length;
+    let oCount = board.flat().filter(cell => cell === O).length;
+    return xCount > oCount ? O : X;
+}
+
+function actions(board) {
+    let possibleActions = [];
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            if (board[i][j] === EMPTY) {
+                possibleActions.push([i, j]);
+            }
+        }
+    }
+    return possibleActions;
+}
+
+function result(board, action) {
+    let newBoard = board.map(row => row.slice());
+    newBoard[action[0]][action[1]] = player(board);
+    return newBoard;
+}
+
+function winner(board) {
+    const lines = [
+        [board[0][0], board[0][1], board[0][2]],
+        [board[1][0], board[1][1], board[1][2]],
+        [board[2][0], board[2][1], board[2][2]],
+        [board[0][0], board[1][0], board[2][0]],
+        [board[0][1], board[1][1], board[2][1]],
+        [board[0][2], board[1][2], board[2][2]],
+        [board[0][0], board[1][1], board[2][2]],
+        [board[0][2], board[1][1], board[2][0]]
+    ];
+
+    for (let line of lines) {
+        if (line.every(cell => cell === X)) return X;
+        if (line.every(cell => cell === O)) return O;
+    }
+    return null;
+}
+
+function terminal(board) {
+    return winner(board) !== null || board.flat().every(cell => cell !== EMPTY);
+}
+
+function utility(board) {
+    let win = winner(board);
+    if (win === X) return 1;
+    if (win === O) return -1;
+    return 0;
+}
+
+function minimax(board) {
+    if (terminal(board)) {
+        return { score: utility(board) };
+    }
+
+    let turn = player(board);
+    let isMaximizing = turn === X;
+    let bestScore = isMaximizing ? -Infinity : Infinity;
+    let bestAction = null;
+
+    for (let action of actions(board)) {
+        let newBoard = result(board, action);
+        let minimaxResult = minimax(newBoard);
+        let score = minimaxResult.score;
+
+        if (isMaximizing) {
+            if (score > bestScore) {
+                bestScore = score;
+                bestAction = action;
+            }
+        } else {
+            if (score < bestScore) {
+                bestScore = score;
+                bestAction = action;
+            }
+        }
+    }
+    return { score: bestScore, action: bestAction };
+}
+
+// Tic-Tac-Toe Game Class
 class tic_tac_toe {
     constructor() {
-        // Size of the board (3x3)
         this.SIZE = 3;
-        // Representation for an empty square on the board
         this.EMPTY = "&nbsp;";
-        // Starting player
         this.turn = "X";
-        // Array to hold each cell/square of the board
         this.squares = [];
-        // Score object to keep track of each player's moves (represented in binary)
-        this.score = { "X": 0, "O": 0 };
-        // Counter for the total moves made
-        this.moves = 0;
-        // Array of binary numbers representing all possible winning combinations
-        this.wins = [7, 56, 448, 73, 146, 292, 273, 84];
-
-        // Initialize the game board and set up event listeners
+        this.gameMode = "multiplayer"; // Game mode: multiplayer or singleplayer
         this.init();
     }
 
     init() {
-        // Create the Tic-Tac-Toe board
         this.create_board();
-        // Start a new game session
         this.start_new_game();
-        // Attach click event listeners to the modal close button and the primary button
         $('#game-modal .close, #game-modal .btn-primary').on('click', this.hide_modal);
     }
 
+    setGameMode(mode) {
+        this.gameMode = mode;
+        this.start_new_game();
+        // Update button styles
+        $("#multiplayer-mode").toggleClass("btn-active", mode === "multiplayer");
+        $("#singleplayer-mode").toggleClass("btn-active", mode === "singleplayer");
+    }
+
     create_board() {
-        // Create a table to represent the game board
         const board = $("<table border=1 cellspacing=0>");
         let indicator = 1;
-        for (let i = 0; i < this.SIZE; i += 1) {
+        for (let i = 0; i < this.SIZE; i++) {
             const row = $("<tr>");
             board.append(row);
-            for (let j = 0; j < this.SIZE; j += 1) {
-                // Create a cell with dimensions and alignment properties
+            for (let j = 0; j < this.SIZE; j++) {
                 const cell = $("<td height=50 width=50 align=center valign=center></td>");
-                // Assign a binary indicator to each cell to track player moves for win conditions
                 cell[0].indicator = indicator;
-                // Attach a click event listener to the cell
                 cell.click(this.handle_cell_click.bind(this));
                 row.append(cell);
-                // Add the cell to the squares array
                 this.squares.push(cell);
-                // Left shift the indicator (doubling its value) for the next cell
                 indicator <<= 1;
             }
         }
-        // Add the board to the main container
         $('#tictactoe').append(board);
     }
 
     start_new_game() {
-        // Reset game parameters for a new game session
         this.turn = "X";
-        this.score = { "X": 0, "O": 0 };
-        this.moves = 0;
-        // Clear the board cells
         this.squares.forEach(square => square.html(this.EMPTY));
     }
 
     handle_cell_click(event) {
-        // Handle player moves when a cell is clicked
         const cell = $(event.currentTarget);
-        // If the cell is not empty, exit the function
         if (cell.html() !== this.EMPTY) return;
 
-        // Mark the cell with the current player's symbol
         cell.html(this.turn);
         cell.attr("data-player", this.turn);
-        this.moves += 1;
-        // Update the current player's score based on the clicked cell's indicator
-        this.score[this.turn] += cell[0].indicator;
-        // Check if the current player has won
-        if (this.check_win(this.score[this.turn])) {
-            // Show the win message and restart the game
-            this.show_modal('Congratulations!', `${this.turn} has won the game!`);
-            this.start_new_game();
-        } else if (this.moves === this.SIZE * this.SIZE) {
-            // If all cells are filled and there's no winner, it's a draw
-            this.show_modal('It\'s a Draw!', 'No one wins this round. Try again!');
+        this.check_game_state();
+
+        if (this.gameMode === "singleplayer" && this.turn === "O") {
+            this.make_ai_move();
+        }
+    }
+
+    make_ai_move() {
+        setTimeout(() => {
+            const boardState = this.convert_to_board_state();
+            const aiMove = minimax(boardState).action;
+            if (aiMove) {
+                this.squares[aiMove[0] * 3 + aiMove[1]].html("O").attr("data-player", "O");
+                this.check_game_state();
+                this.turn = "X"; // Switch turn back to player
+            }
+        }, 500);
+    }
+
+    convert_to_board_state() {
+        let boardState = [[], [], []];
+        for (let i = 0; i < this.squares.length; i++) {
+            let row = Math.floor(i / 3);
+            let col = i % 3;
+            let cell = this.squares[i].html();
+            boardState[row][col] = cell === this.EMPTY ? null : cell;
+        }
+        return boardState;
+    }
+
+    check_game_state() {
+        let boardState = this.convert_to_board_state();
+        if (terminal(boardState)) {
+            let win = winner(boardState);
+            if (win) {
+                this.show_modal('Game Over', `${win} wins!`);
+            } else {
+                this.show_modal('Game Over', 'It\'s a draw!');
+            }
             this.start_new_game();
         } else {
-            // Toggle the player turn (from X to O, or O to X)
             this.turn = this.turn === "X" ? "O" : "X";
         }
     }
 
-    check_win(score) {
-        // Check if the current player's score matches any winning combinations
-        for (let i = 0; i < this.wins.length; i += 1) {
-            if ((this.wins[i] & score) === this.wins[i]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     show_modal(title, message) {
-        // Display a modal with a given title and message
         $('#game-modal .modal-title').text(title);
         $('#game-modal .modal-body p').text(message);
         $('#game-modal').modal('show');
     }
 
     hide_modal() {
-        // Hide the currently displayed modal
         $('#game-modal').modal('hide');
     }
 }
 
-// Once the document is fully loaded, create a new game instance
+// Game Initialization
 $(() => {
-    new tic_tac_toe();
+    const game = new tic_tac_toe();
+    game.setGameMode("multiplayer"); // Set default mode
+    $("#multiplayer-mode").click(() => game.setGameMode("multiplayer"));
+    $("#singleplayer-mode").click(() => game.setGameMode("singleplayer"));
 });
