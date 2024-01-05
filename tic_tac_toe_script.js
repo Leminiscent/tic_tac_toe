@@ -1,100 +1,100 @@
-// AI Functions
-const X = "X";
-const O = "O";
-const EMPTY = null;
+// AI Class
+class TicTacToeAI {
+    constructor() {
+        this.X = "X";
+        this.O = "O";
+        this.EMPTY = null;
+    }
 
-function initial_state() {
-    return [[EMPTY, EMPTY, EMPTY], [EMPTY, EMPTY, EMPTY], [EMPTY, EMPTY, EMPTY]];
-}
+    player(board) {
+        let xCount = board.flat().filter(cell => cell === this.X).length;
+        let oCount = board.flat().filter(cell => cell === this.O).length;
+        return xCount > oCount ? this.O : this.X;
+    }
 
-function player(board) {
-    let xCount = board.flat().filter(cell => cell === X).length;
-    let oCount = board.flat().filter(cell => cell === O).length;
-    return xCount > oCount ? O : X;
-}
-
-function actions(board) {
-    let possibleActions = [];
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            if (board[i][j] === EMPTY) {
-                possibleActions.push([i, j]);
+    actions(board) {
+        let possibleActions = [];
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (board[i][j] === this.EMPTY) {
+                    possibleActions.push([i, j]);
+                }
             }
         }
-    }
-    return possibleActions;
-}
-
-function result(board, action) {
-    let newBoard = board.map(row => row.slice());
-    newBoard[action[0]][action[1]] = player(board);
-    return newBoard;
-}
-
-function winner(board) {
-    const lines = [
-        [board[0][0], board[0][1], board[0][2]],
-        [board[1][0], board[1][1], board[1][2]],
-        [board[2][0], board[2][1], board[2][2]],
-        [board[0][0], board[1][0], board[2][0]],
-        [board[0][1], board[1][1], board[2][1]],
-        [board[0][2], board[1][2], board[2][2]],
-        [board[0][0], board[1][1], board[2][2]],
-        [board[0][2], board[1][1], board[2][0]]
-    ];
-
-    for (let line of lines) {
-        if (line.every(cell => cell === X)) return X;
-        if (line.every(cell => cell === O)) return O;
-    }
-    return null;
-}
-
-function terminal(board) {
-    return winner(board) !== null || board.flat().every(cell => cell !== EMPTY);
-}
-
-function utility(board) {
-    let win = winner(board);
-    if (win === X) return 1;
-    if (win === O) return -1;
-    return 0;
-}
-
-function minimax(board, alpha = -Infinity, beta = Infinity) {
-    if (terminal(board)) {
-        return { score: utility(board) };
+        return possibleActions;
     }
 
-    let turn = player(board);
-    let isMaximizing = turn === X;
-    let bestScore = isMaximizing ? -Infinity : Infinity;
-    let bestAction = null;
+    result(board, action) {
+        let newBoard = board.map(row => row.slice());
+        newBoard[action[0]][action[1]] = this.player(board);
+        return newBoard;
+    }
 
-    for (let action of actions(board)) {
-        let newBoard = result(board, action);
-        let minimaxResult = minimax(newBoard, alpha, beta);
-        let score = minimaxResult.score;
+    winner(board) {
+        const lines = [
+            [board[0][0], board[0][1], board[0][2]],
+            [board[1][0], board[1][1], board[1][2]],
+            [board[2][0], board[2][1], board[2][2]],
+            [board[0][0], board[1][0], board[2][0]],
+            [board[0][1], board[1][1], board[2][1]],
+            [board[0][2], board[1][2], board[2][2]],
+            [board[0][0], board[1][1], board[2][2]],
+            [board[0][2], board[1][1], board[2][0]]
+        ];
 
-        if (isMaximizing) {
-            if (score > bestScore) {
-                bestScore = score;
-                bestAction = action;
-            }
-            alpha = Math.max(alpha, bestScore);
-        } else {
-            if (score < bestScore) {
-                bestScore = score;
-                bestAction = action;
-            }
-            beta = Math.min(beta, bestScore);
+        for (let line of lines) {
+            if (line.every(cell => cell === this.X)) return this.X;
+            if (line.every(cell => cell === this.O)) return this.O;
+        }
+        return null;
+    }
+
+    terminal(board) {
+        return this.winner(board) !== null || board.flat().every(cell => cell !== this.EMPTY);
+    }
+
+    utility(board) {
+        let win = this.winner(board);
+        if (win === this.X) return 1;
+        if (win === this.O) return -1;
+        return 0;
+    }
+
+    minimax(board, alpha = -Infinity, beta = Infinity) {
+        if (this.terminal(board)) {
+            return { score: this.utility(board) };
         }
 
-        if (beta <= alpha) {
-            break;
+        let turn = this.player(board);
+        let isMaximizing = turn === this.X;
+        let bestScore = isMaximizing ? -Infinity : Infinity;
+        let bestAction = null;
+
+        for (let action of this.actions(board)) {
+            let newBoard = this.result(board, action);
+            let minimaxResult = this.minimax(newBoard, alpha, beta);
+            let score = minimaxResult.score;
+
+            if (isMaximizing) {
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestAction = action;
+                }
+                alpha = Math.max(alpha, bestScore);
+            } else {
+                if (score < bestScore) {
+                    bestScore = score;
+                    bestAction = action;
+                }
+                beta = Math.min(beta, bestScore);
+            }
+
+            if (beta <= alpha) {
+                break;
+            }
         }
+        return { score: bestScore, action: bestAction };
     }
-    return { score: bestScore, action: bestAction };
 }
 
 // Tic-Tac-Toe Game Class
@@ -105,6 +105,7 @@ class tic_tac_toe {
         this.turn = "X";
         this.squares = [];
         this.gameMode = "multiplayer"; // Game mode: multiplayer or singleplayer
+        this.ai = new TicTacToeAI(); // Initialize AI class
         this.init();
     }
 
@@ -161,7 +162,7 @@ class tic_tac_toe {
     make_ai_move() {
         setTimeout(() => {
             const boardState = this.convert_to_board_state();
-            const aiMove = minimax(boardState).action;
+            const aiMove = this.ai.minimax(boardState).action;
             if (aiMove) {
                 this.squares[aiMove[0] * 3 + aiMove[1]].html("O").attr("data-player", "O");
                 this.check_game_state();
@@ -176,15 +177,15 @@ class tic_tac_toe {
             let row = Math.floor(i / 3);
             let col = i % 3;
             let cell = this.squares[i].html();
-            boardState[row][col] = cell === this.EMPTY ? null : cell;
+            boardState[row][col] = cell === this.EMPTY ? this.ai.EMPTY : cell;
         }
         return boardState;
     }
 
     check_game_state() {
         let boardState = this.convert_to_board_state();
-        if (terminal(boardState)) {
-            let win = winner(boardState);
+        if (this.ai.terminal(boardState)) {
+            let win = this.ai.winner(boardState);
             if (win) {
                 this.show_modal('Game Over', `${win} wins!`);
             } else {
