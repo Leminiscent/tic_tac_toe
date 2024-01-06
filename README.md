@@ -1,7 +1,5 @@
 # Tic-Tac-Toe
 
-**Author**: Lemuel Nogueira
-
 ## Overview
 This repository contains the source code for a web-based Tic-Tac-Toe game. The game features both local multiplayer and single-player modes, where the single-player mode pits the human player against an AI opponent. The game is built using HTML, CSS, and JavaScript, with a particular emphasis on JavaScript for gameplay logic.
 
