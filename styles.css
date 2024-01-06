@@ -1,3 +1,4 @@
+/* Define color variables for easy maintenance and readability */
 :root {
     --light-gray: #e0e0e0;
     --medium-gray: #b0b0b0;
@@ -11,88 +12,125 @@
     --td-hover-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
+/* Basic styling for the entire page */
 html {
     height: 100%;
 }
 
 body {
     background: linear-gradient(to bottom, #f6f6f6, var(--light-gray));
+    /* Background with gradient */
     font-family: 'Arial', sans-serif;
+    /* Set default font */
     margin: 0;
+    /* Remove default margin */
 }
 
+/* Styling for all H2 headers */
 h2 {
     color: var(--dark-gray);
     font-weight: bold;
     border-bottom: 2px solid #ddd;
+    /* Add a bottom border */
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
+/* Table layout for the Tic-Tac-Toe board */
 table {
     border-collapse: separate;
     border-spacing: 5px;
+    /* Space between cells */
     margin: 0 auto;
+    /* Center the table */
     box-shadow: var(--td-shadow);
+    /* Shadow effect for table */
 }
 
+/* Styling for each cell (td) of the Tic-Tac-Toe board */
 td {
     border: 1px solid var(--dark-gray);
+    /* Border for each cell */
     width: 60px;
+    /* Width of each cell */
     height: 60px;
+    /* Height of each cell */
     cursor: pointer;
+    /* Change cursor to indicate clickable */
     font-size: 24px;
+    /* Font size for X/O */
     font-weight: bold;
     text-align: center;
     line-height: 60px;
+    /* Align text vertically */
     position: relative;
     transition: background-color 0.3s, box-shadow 0.3s;
+    /* Transition for hover effects */
     user-select: none;
+    /* Prevent text selection */
 }
 
+/* Hover effect for cells */
 td:hover {
     background-color: var(--light-gray);
     box-shadow: var(--td-hover-shadow);
+    /* Shadow effect on hover */
 }
 
+/* Temporary marker for empty cells on hover */
 td:empty:hover::before {
     content: attr(data-hover);
+    /* Show temporary marker */
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    /* Center the marker */
     color: var(--medium-gray);
 }
 
+/* Styling for player X */
 td[data-player="X"] {
     color: var(--red);
+    /* Color for X player */
 }
 
+/* Styling for player O */
 td[data-player="O"] {
     color: var(--blue);
+    /* Color for O player */
 }
 
+/* Styling for modal content */
 .modal-content {
     box-shadow: var(--modal-shadow);
+    /* Shadow effect for modal */
 }
 
+/* Basic styling for buttons */
 .btn {
     font-weight: bold;
     padding: 10px 20px;
     margin: 5px;
 }
 
+/* Interaction effects for buttons */
 .btn:active:hover,
 .btn-active:active:hover {
     transform: scale(0.98);
+    /* Slightly reduce size on click */
 }
 
+/* Styling for active state buttons */
 .btn-active {
     background-color: var(--green);
+    /* Background color for active buttons */
     color: white;
 }
 
+/* Hover and active effects for active buttons */
 .btn-active:hover,
 .btn-active:active:hover {
     background-color: var(--dark-green);
+    /* Darker shade on hover/click */
 }
