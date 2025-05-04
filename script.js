@@ -213,7 +213,7 @@ class TicTacToe {
                 this.checkGameState();
                 this.turn = "X"; // Switch turn back to currentPlayer
             }
-        }, 25); // Delay to simulate thinking time
+        }, 100); // Delay to simulate thinking time
     }
 
     // Convert HTML board to a 2D array for AI processing
